@@ -10,6 +10,7 @@
     "noImplicitThis": false
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "__tests__/**/*.ts"
   ]
 }

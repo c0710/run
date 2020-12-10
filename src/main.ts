@@ -43,8 +43,6 @@ const GLOBAL_API: { [key: string]: any } = {
     Promise
 };
 
-
-
 const jsInterpreter = new Interpreter(new Visitor());
 
 export function run(code: string) {
@@ -52,5 +50,8 @@ export function run(code: string) {
         ecmaVersion: 8,
         sourceType: "script",
     });
+    console.log(root);
     return jsInterpreter.interpret(root);
 }
+
+run('1+1');
