@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
   target: "node",
-  entry: "./src/index.ts",
+  entry: "./src/main.ts",
   mode: "production",
   module: {
     rules: [
@@ -20,5 +20,5 @@ module.exports = {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
     libraryTarget: "umd",
-  },
+  }
 };
