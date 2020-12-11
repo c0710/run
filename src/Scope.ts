@@ -1,4 +1,4 @@
-import {Kind, Variable} from "./variable";
+import {Kind, KindType, Variable} from "./variable";
 
 export type ScopeType = "block" | "function";
 
@@ -55,8 +55,12 @@ export class Scope {
         }
     }
 
+    $getValue(name: string): any {
+        return this.$get(name) !== null ? (this.$get(name) as Variable).value : null;
+    }
+
     // 变量声明方法,变量已定义则抛出语法错误异常
-    $declare(type: Kind, name: string, value: any) {
+    $declare(type: Kind | KindType, name: string, value: any) {
         if (Boolean(this.$get(name))) {
             console.error(`Identifier '${name}' has already been declared`)
             return true;

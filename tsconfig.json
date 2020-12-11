@@ -3,7 +3,7 @@
     "target": "es5",
     "module": "commonjs",
     "strictNullChecks": true,
-    "strict": true,
+    "strict": false,
     "alwaysStrict": true,
     "noImplicitAny": false,
     "sourceMap": true,
