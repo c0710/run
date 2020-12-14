@@ -1,6 +1,7 @@
 import Visitor from './visitor';
 import Scope, { ScopeType } from './Scope';
 import * as ESTree from 'estree';
+import ES5 from './ES5';
 
 const GLOBAL_API: { [key: string]: any } = {
     console,
@@ -45,15 +46,13 @@ const GLOBAL_API: { [key: string]: any } = {
 
 class Interpreter {
     private scope: Scope;
-    private visitor: Visitor;
-    constructor(visitor: Visitor) {
-        this.visitor = visitor;
+    constructor() {
         this.scope = {} as Scope;
     }
     interpret(node: ESTree.Node, options) {
         this.createScope();
         this.injectOption(options);
-        this.visitor.visitNode(node, this.scope);
+        evaluate(node, this.scope);
 
         // 与外部 js 环境通信
         return this.scope.$getValue('$exports');
@@ -77,4 +76,21 @@ class Interpreter {
         this.scope.$const('$exports', options?.$exports || {});
     }
 }
+
+/**
+ * 执行节点方法
+ *
+ * @param node AST 节点
+ * @param scope 作用域对象
+ */
+export function evaluate(node: ESTree.Node, scope: Scope) {
+    const visitor = ES5[node.type];
+    // 不支持的 AST 类型
+    if (!visitor) {
+        throw new Error("[runjs] Unsupported node: " + node.type);
+    }
+    // console.log(node.type);
+    return visitor(node, scope);
+}
+
 export default Interpreter;

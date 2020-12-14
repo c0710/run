@@ -2,7 +2,7 @@ const acorn = require("acorn");
 import Visitor from "./visitor";
 import Interpreter from "./interpreter";
 
-const jsInterpreter = new Interpreter(new Visitor());
+const jsInterpreter = new Interpreter();
 
 export function run(code: string, options?) {
     const root = acorn.parse(code, {
@@ -14,7 +14,11 @@ export function run(code: string, options?) {
 
 //
 const code = `
-    $exports=6;
+    function fn(a, b) {
+        return a + b
+    }
+    $exports = fn(10, 1);
 `;
 
 console.log(run(code));
+// run(code);
