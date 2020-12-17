@@ -116,15 +116,16 @@ const es5 = {
         } else {
             const name = (<ESTree.Identifier>(node.callee)).name;
             const context = scope.$get(name);
-            let res = fn.apply(context ? context.value : null, args);
-            return res;
+            return fn.apply(context ? context.value : null, args);
         }
     },
 
     // if节点
     IfStatement(node: ESTree.IfStatement, scope: Scope) {
         const { test, consequent, alternate } = node;
+        // 判断条件
         const testRes = evaluate(test, scope);
+        // consequent为判断为真之后的操作、alternate为假后的操作
         if (testRes) return evaluate(consequent, scope);
         else return alternate ? evaluate(alternate, scope) : undefined;
     },
@@ -144,6 +145,7 @@ const es5 = {
         if (variable) return variable.value;
     },
 
+    // 对象属性类的值 如 obj.a、console.log
     MemberExpression(node: ESTree.MemberExpression, scope:Scope) {
         const { object, property, computed } = node;
 
