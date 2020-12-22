@@ -130,6 +130,63 @@ const es5 = {
         else return alternate ? evaluate(alternate, scope) : undefined;
     },
 
+    // for节点
+    ForStatement(node: ESTree.ForStatement, scope: Scope) {
+        const { init, test, update, body } = node;
+        const forScope = new Scope("block", scope);
+
+        for (
+            init ? evaluate(init, forScope) : null;
+            test ? evaluate(test, forScope) : true;
+            update ? evaluate(update, forScope) : null
+        ) {
+            const res = evaluate(body, forScope);
+            if (Signal.isBreak(res)) break;
+            if (Signal.isContinue(res)) continue;
+            if (Signal.isReturn(res)) return res.result;
+        }
+
+    },
+
+    // 更新节点
+    UpdateExpression(node: ESTree.UpdateExpression, scope: Scope) {
+        const { prefix, argument, operator } = node;
+        let updateVar;
+
+        if (argument.type === 'Identifier') {
+            updateVar = scope.$get(argument.name)
+        } else if (argument.type === "MemberExpression") {
+            //对象成员表达式类型
+            const { object, property, computed } = argument;
+            const obj = evaluate(object, scope);
+            const key = computed
+                ? evaluate(property, scope)
+                : (<ESTree.Identifier>property).name;
+            updateVar = {
+                get value() {
+                    return obj[key];
+                },
+                set value(v) {
+                    obj[key] = v;
+                },
+            };
+        }
+        return {
+            "++": (v) => {
+                const result = v.value;
+                v.value = result + 1;
+                return prefix ? v.value : result;
+            },
+            "--": (v) => {
+                const result = v.value;
+                v.value = result - 1;
+                return prefix ? v.value : result;
+            },
+        }[operator](updateVar);
+
+    },
+
+
     // return 节点
     ReturnStatement(node: ESTree.ReturnStatement, scope: Scope) {
         return new Signal(

@@ -14,10 +14,11 @@ export function run(code: string, options?) {
 
 //
 const code = `
-    function fn(a, b) {
-        return a + b
+    for(var i = 0; i < 5; i++) {
+        console.log(i)
     }
-    $exports = fn(10, 1);
+    
+    $exports = i
 `;
 
 console.log(run(code));
